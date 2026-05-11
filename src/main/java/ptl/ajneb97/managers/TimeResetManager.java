@@ -32,6 +32,12 @@ public class TimeResetManager {
     public void initialize() {
         long now = System.currentTimeMillis();
 
+        // Ignore if mode is set to COMMAND
+        if(plugin.getConfigsManager().getMainConfigManager().getPlayTimeReset().getMode() == PlayTimeResetConfig.Mode.COMMAND){
+            nextResetMillis = -1;
+            return;
+        }
+
         // Time reset already happened.
         if (lastResetMillis > 0 && now >= calculateNextResetMillis(lastResetMillis)) {
             performReset();
@@ -43,6 +49,12 @@ public class TimeResetManager {
     }
 
     public void checkAndReset() {
+        // Ignore if mode is set to COMMAND
+        if(plugin.getConfigsManager().getMainConfigManager().getPlayTimeReset().getMode() == PlayTimeResetConfig.Mode.COMMAND){
+            nextResetMillis = -1;
+            return;
+        }
+
         long now = System.currentTimeMillis();
 
         if (now >= nextResetMillis) {
@@ -114,6 +126,9 @@ public class TimeResetManager {
 
     public String getTimeUntilNextReset(){
         long timeUntilNextResetMillis = getTimeUntilNextResetMillis();
+        if(timeUntilNextResetMillis == -1){
+            return "N/A";
+        }
         return TimeUtils.getTime(timeUntilNextResetMillis/1000,plugin.getMessagesManager());
     }
 
