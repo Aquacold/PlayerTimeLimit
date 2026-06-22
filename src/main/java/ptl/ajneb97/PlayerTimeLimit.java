@@ -96,8 +96,8 @@ public class PlayerTimeLimit extends JavaPlugin {
 
 	public void setVersion(){
 		String packageName = Bukkit.getServer().getClass().getPackage().getName();
-		String bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
-        switch (bukkitVersion) {
+		String minecraftVersion = ServerVersion.getMinecraftVersion();
+        switch (minecraftVersion) {
             case "1.20.5", "1.20.6" -> serverVersion = ServerVersion.v1_20_R4;
             case "1.21", "1.21.1" -> serverVersion = ServerVersion.v1_21_R1;
             case "1.21.2", "1.21.3" -> serverVersion = ServerVersion.v1_21_R2;
@@ -106,12 +106,13 @@ public class PlayerTimeLimit extends JavaPlugin {
             case "1.21.6", "1.21.7", "1.21.8" -> serverVersion = ServerVersion.v1_21_R5;
             case "1.21.9", "1.21.10" -> serverVersion = ServerVersion.v1_21_R6;
             case "1.21.11" -> serverVersion = ServerVersion.v1_21_R7;
-			case "26.1" -> serverVersion = ServerVersion.v26_1;
+			case "26.1","26.1.1","26.1.2" -> serverVersion = ServerVersion.v26_1;
+			case "26.2" -> serverVersion = ServerVersion.v26_2;
             default -> {
                 try {
                     serverVersion = ServerVersion.valueOf(packageName.replace("org.bukkit.craftbukkit.", ""));
                 } catch (Exception e) {
-                    serverVersion = ServerVersion.v26_1;
+                    serverVersion = ServerVersion.v26_2;
                 }
             }
         }
