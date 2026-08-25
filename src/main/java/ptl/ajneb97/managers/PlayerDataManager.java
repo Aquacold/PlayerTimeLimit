@@ -8,6 +8,7 @@ import ptl.ajneb97.PlayerTimeLimit;
 import ptl.ajneb97.api.PlayerTimeLimitAPI;
 import ptl.ajneb97.model.internal.GenericCallback;
 import ptl.ajneb97.model.player.PlayerData;
+import ptl.ajneb97.model.TimeLimit;
 import ptl.ajneb97.utils.MiniMessageUtils;
 import ptl.ajneb97.utils.TimeUtils;
 
@@ -174,35 +175,36 @@ public class PlayerDataManager {
         }
     }
 
+public int getTimeLimit(UUID uuid) {
+    if (uuid == null) {
+        return 0;
+    }
+    
+    PlayerData player = getPlayerData(uuid);
+    if (player == null) {
+        return 0;
+    }
+
+    String limitName = player.getTimeLimit();
+    if (limitName == null) {
+        return 0;
+    }
+
+    Map<String, TimeLimit> timeLimits = plugin.getConfigsManager().getMainConfigManager().getTimeLimits();
+    if (timeLimits == null || !timeLimits.containsKey(limitName)) {
+        return 0;
+    }
+
+    TimeLimit limit = timeLimits.get(limitName);
+    return limit != null ? limit.getSeconds() : 0;
+}
+
+// Überladung für direkten Aufruf mit Player-Objekt
 public int getTimeLimit(Player player) {
     if (player == null) {
         return 0;
     }
-    
-    // Bypass-Prüfung
-    if (player.hasPermission("playertimelimit.bypass")) {
-        return 0;
-    }
-
-    Map<String, TimeLimit> limits = plugin.getConfigsManager().getMainConfigManager().getTimeLimits();
-    if (limits == null || limits.isEmpty()) {
-        return 0;
-    }
-
-    int highestTime = 0;
-    for (Map.Entry<String, TimeLimit> entry : limits.entrySet()) {
-        String limitKey = entry.getKey();
-        TimeLimit limitObj = entry.getValue();
-
-        if (limitObj != null && player.hasPermission("playertimelimit.limit." + limitKey)) {
-            int seconds = limitObj.getSeconds();
-            if (seconds > highestTime) {
-                highestTime = seconds;
-            }
-        }
-    }
-
-    return highestTime;
+    return getTimeLimit(player.getUniqueId());
 }
 
     public int getCurrentTime(Player player){
