@@ -47,18 +47,18 @@ public class PlayerTimeManager {
         }
         if (player == null || !player.isOnline()) {
         return;
-        }
-    
-        // Leisten nur anzeigen, wenn der Spieler ein echtes Limit > 0 hat
-        int limit = plugin.getPlayerDataManager().getTimeLimit(player);
-        if (limit <= 0) {
-            return;
-        }
-    
-        int remaining = plugin.getPlayerDataManager().getRemainingTime(player);
-        if (remaining < 0) {
-            return;
-        }
+    }
+
+    // Leisten nur anzeigen, wenn der Spieler ein echtes Limit > 0 hat
+    int limit = plugin.getPlayerDataManager().getTimeLimit(player.getUniqueId());
+    if (limit <= 0) {
+        return;
+    }
+
+    int remaining = plugin.getPlayerDataManager().getRemainingTime(player.getUniqueId());
+    if (remaining < 0) {
+        return;
+    }
 
         String timeLeftString = playerDataManager.getTimeLeft(player);
         boolean isMessageEnabled = playerDataManager.isMessageEnabled(player);
