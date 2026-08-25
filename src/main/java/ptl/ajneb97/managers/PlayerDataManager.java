@@ -174,24 +174,36 @@ public class PlayerDataManager {
         }
     }
 
-    public int getTimeLimit(UUID uuid) {
-        PlayerData playerData = getPlayerByUUID(uuid);
-        Map<String,Integer> timeLimits = plugin.getConfigsManager().getMainConfigManager().getTimeLimits();
-        int timeLimitDefault = timeLimits.get("default");
-        if(playerData == null){
-            return timeLimitDefault;
-        }
-
-        String timeLimit = playerData.getTimeLimit();
-        if(timeLimit == null){
-            return timeLimitDefault;
-        }
-        if(timeLimits.containsKey(timeLimit)){
-            return timeLimits.get(timeLimit);
-        }
-
-        return timeLimitDefault;
+public int getTimeLimit(Player player) {
+    if (player == null) {
+        return 0;
     }
+    
+    // Bypass-Prüfung
+    if (player.hasPermission("playertimelimit.bypass")) {
+        return 0;
+    }
+
+    Map<String, TimeLimit> limits = plugin.getConfigsManager().getMainConfigManager().getTimeLimits();
+    if (limits == null || limits.isEmpty()) {
+        return 0;
+    }
+
+    int highestTime = 0;
+    for (Map.Entry<String, TimeLimit> entry : limits.entrySet()) {
+        String limitKey = entry.getKey();
+        TimeLimit limitObj = entry.getValue();
+
+        if (limitObj != null && player.hasPermission("playertimelimit.limit." + limitKey)) {
+            int seconds = limitObj.getSeconds();
+            if (seconds > highestTime) {
+                highestTime = seconds;
+            }
+        }
+    }
+
+    return highestTime;
+}
 
     public int getCurrentTime(Player player){
         PlayerData playerData = getPlayer(player);
